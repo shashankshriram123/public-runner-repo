@@ -27,4 +27,5 @@ jobs:
 
       - name: Run scraper
         run: |
+          cd private-scraper-repo
           python3 main.py
