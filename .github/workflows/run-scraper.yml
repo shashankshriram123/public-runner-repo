@@ -1,0 +1,29 @@
+name: Run Private Scraper
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'  # Optional: runs daily at 6am UTC
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone private scraper repo
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/shashankshriram123/private-scraper-repo.git
+          cd private-scraper-repo
+
+      - name: Inject Supabase secrets into .env
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run scraper
+        run: |
+          python3 main.py

@@ -1,9 +1,9 @@
 name: Run Private Scraper
 
 on:
-  workflow_dispatch:  # Allows you to manually run it
+  workflow_dispatch:  # Manual run
   schedule:
-    - cron: '0 6 * * *'  # Optional: Run daily at 6am UTC
+    - cron: '0 6 * * *'  # Optional: Daily at 6am UTC
 
 jobs:
   scrape:
@@ -20,7 +20,11 @@ jobs:
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> private-scraper-repo/.env
           echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> private-scraper-repo/.env
 
-      - name: Run Scraper
+      - name: (Optional) Install dependencies
+        run: |
+          pip install -r private-scraper-repo/requirements.txt || true  # safe fallback
+
+      - name: Run main.py
         run: |
           cd private-scraper-repo
-          python3 push_emails.py  # Replace with your actual entrypoint file
+          python3 main.py
